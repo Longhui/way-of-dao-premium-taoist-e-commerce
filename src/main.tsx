@@ -18,6 +18,8 @@ import { ProductsPage } from '@/pages/ProductsPage';
 import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
 import { OrderConfirmationPage } from '@/pages/OrderConfirmationPage';
+import { AuthPage } from '@/pages/AuthPage';
+import { ProfilePage } from '@/pages/ProfilePage';
 import { Toaster } from '@/components/ui/sonner';
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -49,6 +51,14 @@ const router = createBrowserRouter([
       {
         path: "confirmation",
         element: <OrderConfirmationPage />,
+      },
+      {
+        path: "auth",
+        element: <AuthPage />,
+      },
+      {
+        path: "profile",
+        element: <ProfilePage />,
       }
     ]
   },

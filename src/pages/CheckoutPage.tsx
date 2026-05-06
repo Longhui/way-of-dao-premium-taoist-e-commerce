@@ -1,33 +1,59 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useCart } from '@/store/useCart';
+import { useAuth } from '@/store/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { ChevronRight, ChevronLeft, CreditCard, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
+import { api } from '@/lib/api-client';
 export function CheckoutPage() {
   const [step, setStep] = React.useState(1);
   const items = useCart((s) => s.items);
   const clearCart = useCart((s) => s.clearCart);
+  const isAuthenticated = useAuth((s) => s.isAuthenticated);
+  const user = useAuth((s) => s.user);
   const navigate = useNavigate();
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const shipping = 15.00;
   const total = subtotal + shipping;
-  const handleCompleteOrder = () => {
-    toast.promise(new Promise((resolve) => setTimeout(resolve, 2000)), {
-      loading: 'Aligning with the flow...',
-      success: () => {
-        clearCart();
-        navigate('/confirmation');
-        return 'Order harmonized successfully.';
-      },
-      error: 'The path was blocked. Please try again.',
-    });
+  const handleCompleteOrder = async () => {
+    if (!isAuthenticated || !user) {
+      toast.error("Please login to complete your order");
+      return navigate("/auth", { state: { from: { pathname: "/checkout" } } });
+    }
+    try {
+      toast.loading('Aligning with the flow...');
+      const orderData = {
+        userId: user.id,
+        items: items.map(i => ({
+          productId: i.id,
+          name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+          imageUrl: i.imageUrl
+        })),
+        subtotal,
+        shipping,
+        total
+      };
+      await api('/api/orders', {
+        method: 'POST',
+        body: JSON.stringify(orderData)
+      });
+      clearCart();
+      toast.dismiss();
+      toast.success('Order harmonized successfully.');
+      navigate('/confirmation');
+    } catch (error) {
+      toast.dismiss();
+      toast.error('The path was blocked. Please try again.');
+    }
   };
-  if (items.length === 0 && step !== 4) {
+  if (items.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-32 text-center">
         <h2 className="text-2xl font-display font-bold text-dao-jade mb-6">Your cart is empty</h2>
@@ -35,11 +61,13 @@ export function CheckoutPage() {
       </div>
     );
   }
+  if (step === 3 && !isAuthenticated) {
+    return <Navigate to="/auth" state={{ from: { pathname: "/checkout" } }} replace />;
+  }
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
         <div className="lg:col-span-7 space-y-12">
-          {/* Progress */}
           <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
             <span className={step >= 1 ? "text-dao-jade" : "text-muted-foreground"}>Shipping</span>
             <ChevronRight className="w-3 h-3 text-muted-foreground" />
@@ -60,11 +88,11 @@ export function CheckoutPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" placeholder="Laozi" className="bg-white border-dao-jade/10 focus:border-dao-gold" />
+                    <Input id="name" defaultValue={user?.name || ""} placeholder="Laozi" className="bg-white border-dao-jade/10 focus:border-dao-gold" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" placeholder="wisdom@tao.com" className="bg-white border-dao-jade/10 focus:border-dao-gold" />
+                    <Input id="email" defaultValue={user?.email || ""} type="email" placeholder="wisdom@tao.com" className="bg-white border-dao-jade/10 focus:border-dao-gold" />
                   </div>
                   <div className="md:col-span-2 space-y-2">
                     <Label htmlFor="address">Address</Label>
@@ -138,6 +166,9 @@ export function CheckoutPage() {
                     <span className="text-sm font-bold uppercase tracking-widest">Authentication Verified</span>
                   </div>
                   <p className="text-muted-foreground text-sm leading-relaxed">
+                    Account: <span className="text-dao-jade font-bold">{user?.email}</span>
+                  </p>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     By clicking 'Complete Order', you are confirming your selection of these authentic artifacts. Your path will be updated once the transaction is harmonized.
                   </p>
                 </div>
@@ -153,7 +184,6 @@ export function CheckoutPage() {
             )}
           </AnimatePresence>
         </div>
-        {/* Summary Sidebar */}
         <div className="lg:col-span-5">
           <div className="sticky top-32 bg-white rounded-sm border border-dao-jade/5 p-8 space-y-8">
             <h3 className="text-lg font-display font-bold text-dao-jade">Order Summary</h3>
