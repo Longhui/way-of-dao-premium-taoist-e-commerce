@@ -1,44 +1,20 @@
 import React from 'react';
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, User as UserIcon, LogOut, Settings } from 'lucide-react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useCart } from '@/store/useCart';
-import { useUI } from '@/store/useUI';
-import { useAuth } from '@/store/useAuth';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { CartSheet } from '@/components/cart/CartSheet';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 export function RootLayout() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-  // ZUSTAND PRIMITIVE SELECTORS
-  const cartItems = useCart((s) => s.items);
-  const openCart = useUI((s) => s.openCart);
-  const isAuthenticated = useAuth((s) => s.isAuthenticated);
-  const user = useAuth((s) => s.user);
-  const logout = useAuth((s) => s.logout);
-  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const items = useCart((s) => s.items);
+  const cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Culture', href: '/culture' },
     { name: 'Shop', href: '/shop' },
   ];
-  const handleCartClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    openCart();
-  };
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
   return (
     <div className="min-h-screen flex flex-col bg-dao-paper font-sans selection:bg-dao-jade selection:text-dao-paper">
       <nav className="sticky top-0 z-50 bg-dao-paper/80 backdrop-blur-md border-b border-dao-jade/10">
@@ -65,54 +41,14 @@ export function RootLayout() {
             </div>
             <div className="flex items-center gap-4">
               <ThemeToggle className="static" />
-              {/* Profile/Auth */}
-              {isAuthenticated ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="p-2 text-dao-jade hover:text-dao-gold transition-colors focus:outline-none">
-                      <UserIcon className="w-6 h-6" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-white border-dao-jade/10 shadow-soft">
-                    <DropdownMenuLabel className="font-display text-dao-jade">
-                      {user?.name}
-                      <p className="text-[10px] text-muted-foreground font-sans truncate">{user?.email}</p>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-dao-jade/5" />
-                    {user?.role === 'admin' && (
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin" className="cursor-pointer text-dao-jade font-bold flex items-center">
-                          <Settings className="w-4 h-4 mr-2" /> Archives (Admin)
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="cursor-pointer text-dao-jade">My Collection</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-dao-jade/5" />
-                    <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer">
-                      <LogOut className="w-4 h-4 mr-2" /> Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Link to="/admin-login" className="p-2 text-dao-jade hover:text-dao-gold transition-colors">
-                  <UserIcon className="w-6 h-6" />
-                </Link>
-              )}
-              {/* Cart */}
-              <button
-                onClick={handleCartClick}
-                className="relative p-2 text-dao-jade hover:text-dao-gold transition-colors"
-                aria-label="Open cart"
-              >
+              <Link to="/shop" className="relative p-2 text-dao-jade hover:text-dao-gold transition-colors">
                 <ShoppingCart className="w-6 h-6" />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-dao-gold text-dao-paper text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}
-              </button>
+              </Link>
               <button
                 className="md:hidden p-2 text-dao-jade"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -135,32 +71,6 @@ export function RootLayout() {
                 {link.name}
               </Link>
             ))}
-            {isAuthenticated && user?.role === 'admin' && (
-              <Link
-                to="/admin"
-                onClick={() => setIsMenuOpen(false)}
-                className="block text-lg font-bold text-dao-jade"
-              >
-                Archives (Admin)
-              </Link>
-            )}
-            {isAuthenticated ? (
-              <Link
-                to="/profile"
-                onClick={() => setIsMenuOpen(false)}
-                className="block text-lg font-medium text-dao-jade"
-              >
-                My Collection
-              </Link>
-            ) : (
-              <Link
-                to="/admin-login"
-                onClick={() => setIsMenuOpen(false)}
-                className="block text-lg font-medium text-dao-jade"
-              >
-                Sign In
-              </Link>
-            )}
           </div>
         )}
       </nav>
@@ -187,6 +97,14 @@ export function RootLayout() {
             <div className="space-y-4">
               <h4 className="text-sm font-bold uppercase tracking-widest text-dao-gold">Contact</h4>
               <p className="text-sm text-dao-paper/70">wisdom@wayofdao.com</p>
+              <div className="flex gap-4 pt-2">
+                <div className="w-8 h-8 rounded-full border border-dao-paper/20 flex items-center justify-center hover:border-dao-gold transition-colors cursor-pointer">
+                  <span className="text-xs">IG</span>
+                </div>
+                <div className="w-8 h-8 rounded-full border border-dao-paper/20 flex items-center justify-center hover:border-dao-gold transition-colors cursor-pointer">
+                  <span className="text-xs">TW</span>
+                </div>
+              </div>
             </div>
           </div>
           <div className="mt-16 pt-8 border-t border-dao-paper/10 text-center text-xs text-dao-paper/50">
@@ -194,7 +112,6 @@ export function RootLayout() {
           </div>
         </div>
       </footer>
-      <CartSheet />
     </div>
   );
 }
