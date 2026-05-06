@@ -2,19 +2,25 @@ import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useCart } from '@/store/useCart';
-import { Button } from '@/components/ui/button';
+import { useUI } from '@/store/useUI';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { CartSheet } from '@/components/cart/CartSheet';
 export function RootLayout() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const location = useLocation();
   const items = useCart((s) => s.items);
+  const openCart = useUI((s) => s.openCart);
   const cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Culture', href: '/culture' },
     { name: 'Shop', href: '/shop' },
   ];
+  const handleCartClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    openCart();
+  };
   return (
     <div className="min-h-screen flex flex-col bg-dao-paper font-sans selection:bg-dao-jade selection:text-dao-paper">
       <nav className="sticky top-0 z-50 bg-dao-paper/80 backdrop-blur-md border-b border-dao-jade/10">
@@ -41,14 +47,18 @@ export function RootLayout() {
             </div>
             <div className="flex items-center gap-4">
               <ThemeToggle className="static" />
-              <Link to="/shop" className="relative p-2 text-dao-jade hover:text-dao-gold transition-colors">
+              <button 
+                onClick={handleCartClick}
+                className="relative p-2 text-dao-jade hover:text-dao-gold transition-colors"
+                aria-label="Open cart"
+              >
                 <ShoppingCart className="w-6 h-6" />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-dao-gold text-dao-paper text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}
-              </Link>
+              </button>
               <button
                 className="md:hidden p-2 text-dao-jade"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -112,6 +122,8 @@ export function RootLayout() {
           </div>
         </div>
       </footer>
+      {/* Slide-out Cart */}
+      <CartSheet />
     </div>
   );
 }

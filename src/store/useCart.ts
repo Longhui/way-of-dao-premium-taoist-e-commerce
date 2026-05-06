@@ -37,7 +37,7 @@ export const useCart = create<CartStore>()(
       clearCart: () => set({ items: [] }),
     }),
     {
-      name: 'way-of-dao-cart',
+      name: 'way-of-dao-cart-v1',
     }
   )
 );
