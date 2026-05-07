@@ -31,6 +31,7 @@ export function AuthPage() {
         name: userData.name,
         email: userData.email || '',
         isAuthenticated: true,
+        role: userData.role || 'user',
       };
       login(session);
       toast.success(`Welcome back, ${userData.name}`);
@@ -80,8 +81,8 @@ export function AuthPage() {
                   className="bg-dao-paper/50 border-dao-jade/10 focus:border-dao-gold"
                 />
               </div>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isLoading}
                 className="w-full h-14 bg-dao-jade hover:bg-dao-jade/90 text-dao-paper font-bold uppercase tracking-widest text-xs"
               >
