@@ -7,6 +7,7 @@ import { api } from '@/lib/api-client';
 import { Product } from '@shared/types';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 export function ProductsPage() {
@@ -37,8 +38,8 @@ export function ProductsPage() {
                       onClick={() => setActiveCategory(cat)}
                       className={cn(
                         "text-sm font-medium transition-all text-left w-full hover:text-dao-gold",
-                        activeCategory === cat 
-                          ? "text-dao-jade font-bold border-l-4 border-dao-gold pl-4" 
+                        activeCategory === cat
+                          ? "text-dao-jade font-bold border-l-4 border-dao-gold pl-4"
                           : "text-muted-foreground hover:pl-2"
                       )}
                     >
@@ -113,7 +114,13 @@ export function ProductsPage() {
               <div className="py-24 text-center space-y-4">
                 <p className="text-dao-jade font-display text-2xl font-medium">The path is currently empty</p>
                 <p className="text-muted-foreground">Adjust your search to find other artifacts.</p>
-                <Button variant="ghost" onClick={() => {setSearch(''); setActiveCategory('All');}} className="text-dao-gold font-bold uppercase text-xs tracking-widest">Clear Path</Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => {setSearch(''); setActiveCategory('All');}} 
+                  className="text-dao-gold hover:text-dao-jade font-bold uppercase text-xs tracking-widest"
+                >
+                  Clear Path
+                </Button>
               </div>
             )}
           </div>

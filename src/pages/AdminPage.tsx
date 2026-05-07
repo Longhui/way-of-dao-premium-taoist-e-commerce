@@ -84,7 +84,7 @@ export function AdminPage() {
                   <form onSubmit={handleProductSubmit} className="space-y-4 py-4">
                     <div className="grid gap-2"><Label className="text-dao-jade">Name</Label><Input name="name" defaultValue={editingProduct?.name} required className="bg-white" /></div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="grid gap-2"><Label className="text-dao-jade">Category</Label><select name="category" defaultValue={editingProduct?.category} className="h-10 px-3 rounded-md bg-white border border-dao-jade/10 text-sm"><option value="Artifacts">Artifacts</option><option value="Incense">Incense</option><option value="Literature">Literature</option><option value="Attire">Attire</option></select></div>
+                      <div className="grid gap-2"><Label className="text-dao-jade">Category</Label><select name="category" defaultValue={editingProduct?.category} className="h-10 px-3 rounded-md bg-white border border-dao-jade/20 text-dao-jade font-medium text-sm focus:ring-2 focus:ring-dao-jade outline-none"><option value="Artifacts">Artifacts</option><option value="Incense">Incense</option><option value="Literature">Literature</option><option value="Attire">Attire</option></select></div>
                       <div className="grid gap-2"><Label className="text-dao-jade">Price</Label><Input name="price" type="number" step="0.01" defaultValue={editingProduct?.price} required className="bg-white" /></div>
                     </div>
                     <div className="grid gap-2"><Label className="text-dao-jade">Image URL</Label><Input name="imageUrl" defaultValue={editingProduct?.imageUrl} required className="bg-white" /></div>
