@@ -1,6 +1,6 @@
 # Way of DAO
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Longhui/way-of-dao-premium-taoist-e-commerce)
 
 A modern, full-stack chat application built on Cloudflare Workers. This project demonstrates a scalable real-world chat system using Durable Objects for entity storage (Users, Chats, Messages), React with shadcn/ui for the frontend, and Hono for the API backend. Perfect for developers building collaborative apps with strong consistency and global replication.
 
@@ -96,7 +96,7 @@ Frontend uses `api(path, init)` helper in `src/lib/api-client.ts`.
    ```
    Or use the one-click deploy:
 
-   [cloudflarebutton]
+   [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Longhui/way-of-dao-premium-taoist-e-commerce)
 
 3. **Custom Domain**: Edit `wrangler.jsonc` and run `wrangler deploy`.
 4. **Environment Variables**: Set via `wrangler secret put` or dashboard.
