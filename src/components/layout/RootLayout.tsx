@@ -19,12 +19,13 @@ export function RootLayout() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const items = useCart((s) => s.items);
+  // ZUSTAND PRIMITIVE SELECTORS
+  const cartItems = useCart((s) => s.items);
   const openCart = useUI((s) => s.openCart);
   const isAuthenticated = useAuth((s) => s.isAuthenticated);
   const user = useAuth((s) => s.user);
   const logout = useAuth((s) => s.logout);
-  const cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Culture', href: '/culture' },

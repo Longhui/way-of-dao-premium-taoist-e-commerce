@@ -2,7 +2,7 @@ import '@/lib/errorReporter';
 import { enableMapSet } from "immer";
 enableMapSet();
 import { StrictMode } from 'react'
-import { createRoot, type Root } from 'react-dom/client'
+import { createRoot } from 'react-dom/client'
 import {
   createBrowserRouter,
   RouterProvider,
@@ -76,15 +76,9 @@ const router = createBrowserRouter([
     ]
   },
 ]);
-// Prevent multiple root creation warnings during HMR or re-execution
 const container = document.getElementById('root');
 if (container) {
-  const globalGui = window as any;
-  if (!globalGui.__reactRoot) {
-    globalGui.__reactRoot = createRoot(container);
-  }
-  const root = globalGui.__reactRoot as Root;
-  root.render(
+  createRoot(container).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <ErrorBoundary>
@@ -92,6 +86,6 @@ if (container) {
           <Toaster richColors position="bottom-right" />
         </ErrorBoundary>
       </QueryClientProvider>
-    </StrictMode>,
+    </StrictMode>
   );
 }
