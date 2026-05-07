@@ -2,7 +2,7 @@ import '@/lib/errorReporter';
 import { enableMapSet } from "immer";
 enableMapSet();
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { createRoot, type Root } from 'react-dom/client'
 import {
   createBrowserRouter,
   RouterProvider,
@@ -23,7 +23,14 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { AdminPage } from '@/pages/AdminPage';
 import { Toaster } from '@/components/ui/sonner';
 import { AdminGuard } from '@/components/guards/AdminGuard';
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      retry: 1,
+    },
+  },
+});
 const router = createBrowserRouter([
   {
     path: "/",
@@ -69,13 +76,22 @@ const router = createBrowserRouter([
     ]
   },
 ]);
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
-        <RouterProvider router={router} />
-        <Toaster richColors position="bottom-right" />
-      </ErrorBoundary>
-    </QueryClientProvider>
-  </StrictMode>,
-)
+// Prevent multiple root creation warnings during HMR or re-execution
+const container = document.getElementById('root');
+if (container) {
+  const globalGui = window as any;
+  if (!globalGui.__reactRoot) {
+    globalGui.__reactRoot = createRoot(container);
+  }
+  const root = globalGui.__reactRoot as Root;
+  root.render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <ErrorBoundary>
+          <RouterProvider router={router} />
+          <Toaster richColors position="bottom-right" />
+        </ErrorBoundary>
+      </QueryClientProvider>
+    </StrictMode>,
+  );
+}

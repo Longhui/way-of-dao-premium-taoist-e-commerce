@@ -1,14 +1,14 @@
 import { IndexedEntity, Env, Index } from "./core-utils";
-import type { User, Chat, ChatMessage, Order, Product } from "@shared/types";
-import { MOCK_CHAT_MESSAGES, MOCK_CHATS, MOCK_USERS, MOCK_PRODUCTS } from "@shared/mock-data";
+import type { User, Order, Product, Review } from "@shared/types";
+import { MOCK_PRODUCTS, MOCK_USERS } from "@shared/mock-data";
 /**
  * User Entity: Stores persistent user profile information.
  */
 export class UserEntity extends IndexedEntity<User> {
   static readonly entityName = "user";
   static readonly indexName = "users";
-  static readonly initialState: User = { id: "", name: "", role: 'user' };
-  static seedData = MOCK_USERS;
+  static readonly initialState: User = { id: "", name: "", email: "", role: 'user' };
+  static seedData = MOCK_USERS.map(u => ({ ...u, email: `${u.name.toLowerCase().replace(' ', '')}@dao.com`, role: u.id === 'u1' ? 'admin' : 'user' })) as User[];
   static async findByEmail(env: Env, email: string): Promise<User | null> {
     const { items } = await this.list(env);
     return items.find(u => u.email === email) || null;
@@ -32,9 +32,32 @@ export class ProductEntity extends IndexedEntity<Product> {
     price: 0,
     description: "",
     imageUrl: "",
-    specifications: {}
+    specifications: {},
+    createdAt: Date.now()
   };
-  static seedData = MOCK_PRODUCTS;
+  static seedData = MOCK_PRODUCTS.map(p => ({ ...p, createdAt: Date.now() })) as Product[];
+}
+/**
+ * Review Entity: Product reflections.
+ */
+export class ReviewEntity extends IndexedEntity<Review> {
+  static readonly entityName = "review";
+  static readonly indexName = "reviews";
+  static readonly initialState: Review = {
+    id: "",
+    productId: "",
+    userId: "",
+    userName: "",
+    rating: 5,
+    text: "",
+    createdAt: Date.now()
+  };
+  static async listByProduct(env: Env, productId: string): Promise<Review[]> {
+    const { items } = await this.list(env);
+    return items
+      .filter(r => r.productId === productId)
+      .sort((a, b) => b.createdAt - a.createdAt);
+  }
 }
 /**
  * Order Entity: Stores transaction records.
@@ -58,33 +81,8 @@ export class OrderEntity extends IndexedEntity<Order> {
       .filter(order => order.userId === userId)
       .sort((a, b) => b.createdAt - a.createdAt);
   }
-}
-/**
- * Chat Board Entity: Handles group discussions and message history.
- */
-export type ChatBoardState = Chat & { messages: ChatMessage[] };
-const SEED_CHAT_BOARDS: ChatBoardState[] = MOCK_CHATS.map(c => ({
-  ...c,
-  messages: (MOCK_CHAT_MESSAGES as ChatMessage[]).filter(m => m.chatId === c.id),
-}));
-export class ChatBoardEntity extends IndexedEntity<ChatBoardState> {
-  static readonly entityName = "chat";
-  static readonly indexName = "chats";
-  static readonly initialState: ChatBoardState = { id: "", title: "", messages: [] };
-  static seedData = SEED_CHAT_BOARDS;
-  async listMessages(): Promise<ChatMessage[]> {
-    const state = await this.getState();
-    return state.messages;
-  }
-  async sendMessage(userId: string, text: string): Promise<ChatMessage> {
-    const msg: ChatMessage = {
-      id: crypto.randomUUID(),
-      chatId: this.id,
-      userId,
-      text,
-      ts: Date.now()
-    };
-    await this.mutate(s => ({ ...s, messages: [...s.messages, msg] }));
-    return msg;
+  static async listAll(env: Env): Promise<Order[]> {
+    const { items } = await this.list(env);
+    return items.sort((a, b) => b.createdAt - a.createdAt);
   }
 }
