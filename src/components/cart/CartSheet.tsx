@@ -9,6 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetFooter,
+  SheetDescription,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -32,6 +33,9 @@ export function CartSheet() {
           <SheetTitle className="text-2xl font-display font-bold text-dao-jade flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-dao-gold" /> Your Collection
           </SheetTitle>
+          <SheetDescription className="sr-only">
+            Manage your selected artifacts before finalizing your acquisition.
+          </SheetDescription>
         </SheetHeader>
         <div className="flex-1 overflow-hidden">
           {items.length === 0 ? (
@@ -61,25 +65,28 @@ export function CartSheet() {
                           <h4 className="text-sm font-bold text-dao-jade leading-tight">{item.name}</h4>
                           <p className="text-xs text-dao-gold font-medium mt-1">${item.price.toFixed(2)}</p>
                         </div>
-                        <button 
+                        <button
                           onClick={() => removeItem(item.id)}
                           className="text-muted-foreground hover:text-destructive transition-colors"
+                          aria-label={`Remove ${item.name}`}
                         >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
                       <div className="flex items-center justify-between mt-4">
                         <div className="flex items-center border border-dao-jade/10 rounded-full px-2 py-1">
-                          <button 
+                          <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             className="p-1 hover:text-dao-gold transition-colors"
+                            aria-label="Decrease quantity"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
                           <span className="w-8 text-center text-xs font-bold text-dao-jade">{item.quantity}</span>
-                          <button 
+                          <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             className="p-1 hover:text-dao-gold transition-colors"
+                            aria-label="Increase quantity"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -103,7 +110,7 @@ export function CartSheet() {
                 <span className="text-xl font-display font-bold text-dao-jade">${subtotal.toFixed(2)}</span>
               </div>
               <p className="text-[10px] text-muted-foreground italic">Shipping and taxes calculated at checkout.</p>
-              <Button 
+              <Button
                 onClick={handleCheckout}
                 className="w-full h-14 bg-dao-jade hover:bg-dao-jade/90 text-dao-paper font-bold uppercase tracking-widest text-xs"
               >

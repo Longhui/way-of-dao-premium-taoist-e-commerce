@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client'
 import {
   createBrowserRouter,
   RouterProvider,
+  Navigate,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -20,8 +21,19 @@ import { CheckoutPage } from '@/pages/CheckoutPage';
 import { OrderConfirmationPage } from '@/pages/OrderConfirmationPage';
 import { AuthPage } from '@/pages/AuthPage';
 import { ProfilePage } from '@/pages/ProfilePage';
+import { AdminPage } from '@/pages/AdminPage';
 import { Toaster } from '@/components/ui/sonner';
+import { useAuth } from '@/store/useAuth';
 const queryClient = new QueryClient();
+// Route Protection Component
+function AdminGuard({ children }: { children: React.ReactNode }) {
+  const user = useAuth((s) => s.user);
+  const isAuthenticated = useAuth((s) => s.isAuthenticated);
+  if (!isAuthenticated || user?.role !== 'admin') {
+    return <Navigate to="/shop" replace />;
+  }
+  return <>{children}</>;
+}
 const router = createBrowserRouter([
   {
     path: "/",
@@ -59,6 +71,10 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "admin",
+        element: <AdminGuard><AdminPage /></AdminGuard>,
       }
     ]
   },

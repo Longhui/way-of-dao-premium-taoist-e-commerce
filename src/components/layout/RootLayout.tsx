@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, User as UserIcon, LogOut } from 'lucide-react';
+import { ShoppingCart, Menu, X, User as UserIcon, LogOut, Settings } from 'lucide-react';
 import { useCart } from '@/store/useCart';
 import { useUI } from '@/store/useUI';
 import { useAuth } from '@/store/useAuth';
@@ -78,9 +78,17 @@ export function RootLayout() {
                       <p className="text-[10px] text-muted-foreground font-sans truncate">{user?.email}</p>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-dao-jade/5" />
+                    {user?.role === 'admin' && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="cursor-pointer text-dao-jade font-bold">
+                          <Settings className="w-4 h-4 mr-2" /> Archives (Admin)
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild>
                       <Link to="/profile" className="cursor-pointer text-dao-jade">My Collection</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-dao-jade/5" />
                     <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer">
                       <LogOut className="w-4 h-4 mr-2" /> Logout
                     </DropdownMenuItem>
@@ -126,6 +134,15 @@ export function RootLayout() {
                 {link.name}
               </Link>
             ))}
+            {isAuthenticated && user?.role === 'admin' && (
+              <Link
+                to="/admin"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-lg font-bold text-dao-jade"
+              >
+                Archives (Admin)
+              </Link>
+            )}
             {isAuthenticated && (
               <Link
                 to="/profile"

@@ -3,22 +3,29 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { MOCK_PRODUCTS } from '@shared/mock-data';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/lib/api-client';
+import { Product } from '@shared/types';
+import { Skeleton } from '@/components/ui/skeleton';
 export function HomePage() {
-  const featured = MOCK_PRODUCTS.slice(0, 4);
+  const { data: products, isLoading } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => api<Product[]>('/api/products'),
+  });
+  const featured = products?.slice(0, 4) ?? [];
   return (
     <div className="animate-fade-in">
       {/* Hero Section */}
       <section className="relative h-[85vh] flex items-center overflow-hidden bg-dao-jade">
         <div className="absolute inset-0 opacity-40">
-          <img 
-            src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=2000&auto=format&fit=crop" 
-            alt="Taoist Landscape" 
+          <img
+            src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=2000&auto=format&fit=crop"
+            alt="Taoist Landscape"
             className="w-full h-full object-cover"
           />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
@@ -57,29 +64,39 @@ export function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featured.map((product, idx) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                viewport={{ once: true }}
-                className="group cursor-pointer"
-              >
-                <Link to={`/shop/${product.id}`}>
-                  <div className="aspect-[4/5] overflow-hidden bg-muted mb-6 relative">
-                    <img 
-                      src={product.imageUrl} 
-                      alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-dao-jade/10 group-hover:bg-transparent transition-colors" />
-                  </div>
-                  <h3 className="text-lg font-bold text-dao-jade mb-1 group-hover:text-dao-gold transition-colors">{product.name}</h3>
-                  <p className="text-dao-gold font-medium">${product.price.toFixed(2)}</p>
-                </Link>
-              </motion.div>
-            ))}
+            {isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="space-y-4">
+                  <Skeleton className="aspect-[4/5] w-full rounded-sm bg-dao-jade/5" />
+                  <Skeleton className="h-6 w-3/4 bg-dao-jade/5" />
+                  <Skeleton className="h-4 w-1/4 bg-dao-jade/5" />
+                </div>
+              ))
+            ) : (
+              featured.map((product, idx) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  viewport={{ once: true }}
+                  className="group cursor-pointer"
+                >
+                  <Link to={`/shop/${product.id}`}>
+                    <div className="aspect-[4/5] overflow-hidden bg-muted mb-6 relative">
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-dao-jade/10 group-hover:bg-transparent transition-colors" />
+                    </div>
+                    <h3 className="text-lg font-bold text-dao-jade mb-1 group-hover:text-dao-gold transition-colors">{product.name}</h3>
+                    <p className="text-dao-gold font-medium">${product.price.toFixed(2)}</p>
+                  </Link>
+                </motion.div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -102,11 +119,11 @@ export function HomePage() {
               </Button>
             </div>
             <div className="flex-1 w-full max-w-md">
-              <div className="aspect-square rounded-full border border-dao-gold/30 p-8 flex items-center justify-center animate-spin-slow">
+              <div className="aspect-square rounded-full border border-dao-gold/30 p-8 flex items-center justify-center">
                  <div className="w-full h-full rounded-full border border-dao-gold/50 flex items-center justify-center p-8">
-                    <img 
-                      src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=400&auto=format&fit=crop" 
-                      alt="Ancient Texts" 
+                    <img
+                      src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=400&auto=format&fit=crop"
+                      alt="Ancient Texts"
                       className="w-full h-full object-cover rounded-full shadow-2xl"
                     />
                  </div>

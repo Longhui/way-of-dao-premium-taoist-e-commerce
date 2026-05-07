@@ -2,30 +2,51 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Plus, Minus, ShoppingCart, ShieldCheck, Truck } from 'lucide-react';
-import { MOCK_PRODUCTS } from '@shared/mock-data';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/lib/api-client';
+import { Product } from '@shared/types';
 import { useCart } from '@/store/useCart';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 export function ProductDetailPage() {
   const { id } = useParams();
-  const product = MOCK_PRODUCTS.find((p) => p.id === id);
   const addItem = useCart((s) => s.addItem);
   const [quantity, setQuantity] = React.useState(1);
-  if (!product) {
+  const { data: product, isLoading, isError } = useQuery({
+    queryKey: ['product', id],
+    queryFn: () => api<Product>(`/api/products/${id}`),
+    enabled: !!id,
+  });
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="max-w-7xl mx-auto px-4 py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <Skeleton className="aspect-square bg-dao-jade/5" />
+          <div className="space-y-6">
+            <Skeleton className="h-10 w-1/2 bg-dao-jade/5" />
+            <Skeleton className="h-6 w-1/4 bg-dao-jade/5" />
+            <Skeleton className="h-32 w-full bg-dao-jade/5" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (isError || !product) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-display font-bold text-dao-jade mb-4">Product Not Found</h2>
-          <Button asChild variant="outline">
-            <Link to="/shop">Back to Shop</Link>
+          <h2 className="text-3xl font-display font-bold text-dao-jade mb-6">Artifact Lost to Time</h2>
+          <p className="text-muted-foreground mb-8">This particular item is not currently on this path.</p>
+          <Button asChild variant="outline" className="border-dao-jade/20">
+            <Link to="/shop">Return to Collection</Link>
           </Button>
         </div>
       </div>
     );
   }
   const handleAddToCart = () => {
-    // Basic implementation for Phase 1
     for (let i = 0; i < quantity; i++) {
       addItem(product);
     }
@@ -41,19 +62,19 @@ export function ProductDetailPage() {
         </Link>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Image */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="aspect-square bg-muted rounded-sm overflow-hidden shadow-premium"
           >
-            <img 
-              src={product.imageUrl} 
+            <img
+              src={product.imageUrl}
               alt={product.name}
               className="w-full h-full object-cover"
             />
           </motion.div>
           {/* Details */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex flex-col"
@@ -103,17 +124,19 @@ export function ProductDetailPage() {
                 </div>
               </div>
             </div>
-            <div className="mt-12">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-dao-jade mb-4">Specifications</h3>
-              <div className="space-y-2">
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <div key={key} className="flex justify-between text-sm py-2 border-b border-dao-jade/5">
-                    <span className="text-muted-foreground">{key}</span>
-                    <span className="text-dao-jade font-medium">{value}</span>
-                  </div>
-                ))}
+            {product.specifications && Object.keys(product.specifications).length > 0 && (
+              <div className="mt-12">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-dao-jade mb-4">Specifications</h3>
+                <div className="space-y-2">
+                  {Object.entries(product.specifications).map(([key, value]) => (
+                    <div key={key} className="flex justify-between text-sm py-2 border-b border-dao-jade/5">
+                      <span className="text-muted-foreground">{key}</span>
+                      <span className="text-dao-jade font-medium">{value}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </motion.div>
         </div>
       </div>
