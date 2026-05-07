@@ -48,22 +48,22 @@ export function AuthPage() {
     }
   };
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-32 flex items-center justify-center">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-32 flex items-center justify-center bg-dao-paper">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
         <Card className="bg-white border-dao-jade/10 shadow-premium overflow-hidden">
-          <CardHeader className="text-center space-y-2">
+          <CardHeader className="text-center space-y-2 pb-8 pt-10">
             <CardTitle className="text-3xl font-display font-bold text-dao-jade">
               {isRegister ? "Begin the Journey" : "Enter the Sanctuary"}
             </CardTitle>
-            <CardDescription className="text-muted-foreground italic">
+            <CardDescription className="text-dao-jade/60 italic font-medium">
               {isRegister ? "Create your profile to track your path." : "Realign with your collection."}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-8 pb-10">
             <form onSubmit={handleSubmit} className="space-y-5">
               <AnimatePresence mode="popLayout">
                 {isRegister && (
@@ -73,18 +73,40 @@ export function AuthPage() {
                     exit={{ opacity: 0, height: 0 }}
                     className="space-y-2"
                   >
-                    <Label htmlFor="name">Name</Label>
-                    <Input id="name" placeholder="Laozi" value={name} onChange={(e) => setName(e.target.value)} className="bg-dao-paper/50" />
+                    <Label htmlFor="name" className="text-dao-jade font-bold text-xs uppercase tracking-widest">Full Name</Label>
+                    <Input 
+                      id="name" 
+                      placeholder="e.g. Master Zhou" 
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)} 
+                      className="bg-white border-dao-jade/20 text-dao-jade placeholder:text-muted-foreground/80 focus:ring-dao-jade" 
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="text" placeholder="traveler@dao.com" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-dao-paper/50" required />
+                <Label htmlFor="email" className="text-dao-jade font-bold text-xs uppercase tracking-widest">Email Path</Label>
+                <Input 
+                  id="email" 
+                  type="text" 
+                  placeholder="traveler@dao.com" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  className="bg-white border-dao-jade/20 text-dao-jade placeholder:text-muted-foreground/80 focus:ring-dao-jade" 
+                  required 
+                />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-dao-paper/50" required />
+                <Label htmlFor="password" className="text-dao-jade font-bold text-xs uppercase tracking-widest">Gate Key (Password)</Label>
+                <Input 
+                  id="password" 
+                  type="password" 
+                  placeholder="••••••••" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  className="bg-white border-dao-jade/20 text-dao-jade placeholder:text-muted-foreground/80 focus:ring-dao-jade" 
+                  required 
+                />
               </div>
               <AnimatePresence mode="popLayout">
                 {isRegister && (
@@ -94,22 +116,33 @@ export function AuthPage() {
                     exit={{ opacity: 0, height: 0 }}
                     className="space-y-2"
                   >
-                    <Label htmlFor="confirm">Confirm Password</Label>
-                    <Input id="confirm" type="password" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="bg-dao-paper/50" required />
+                    <Label htmlFor="confirm" className="text-dao-jade font-bold text-xs uppercase tracking-widest">Confirm Gate Key</Label>
+                    <Input 
+                      id="confirm" 
+                      type="password" 
+                      placeholder="••••••••" 
+                      value={confirmPassword} 
+                      onChange={(e) => setConfirmPassword(e.target.value)} 
+                      className="bg-white border-dao-jade/20 text-dao-jade placeholder:text-muted-foreground/80 focus:ring-dao-jade" 
+                      required 
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
-              <Button type="submit" disabled={isLoading} className="w-full h-12 bg-dao-jade hover:bg-dao-jade/90 text-dao-paper font-bold uppercase tracking-widest text-xs mt-4">
-                {isLoading ? "Aligning..." : isRegister ? "Register" : "Sign In"}
+              <Button type="submit" disabled={isLoading} className="w-full h-14 bg-dao-jade hover:bg-dao-jade/90 text-dao-paper font-bold uppercase tracking-[0.2em] text-xs mt-6 transition-all shadow-md active:scale-95">
+                {isLoading ? "Aligning..." : isRegister ? "Begin Journey" : "Enter Sanctuary"}
               </Button>
             </form>
-            <div className="mt-8 pt-6 border-t border-dao-jade/5 text-center space-y-4">
-              <button onClick={() => setIsRegister(!isRegister)} className="text-sm text-dao-jade hover:text-dao-gold transition-colors font-medium">
-                {isRegister ? "Already have a profile? Sign In" : "New traveler? Register here"}
+            <div className="mt-10 pt-8 border-t border-dao-jade/5 text-center space-y-4">
+              <button onClick={() => setIsRegister(!isRegister)} className="text-sm text-dao-jade hover:text-dao-gold transition-colors font-bold underline decoration-dao-jade/10 underline-offset-4">
+                {isRegister ? "Return to Sign In" : "New traveler? Register here"}
               </button>
               {!isRegister && (
-                <div className="text-[10px] text-muted-foreground">
-                  Admin? Log in with <span className="font-bold text-dao-gold">admin / 1234</span>
+                <div className="p-4 bg-dao-jade/5 rounded-md border border-dao-jade/10">
+                  <p className="text-[10px] text-dao-jade/70 font-bold uppercase tracking-widest mb-1">Celestial Access</p>
+                  <p className="text-[11px] text-dao-jade leading-relaxed">
+                    Admin? Use <span className="font-bold text-dao-gold px-1">admin / 1234</span>
+                  </p>
                 </div>
               )}
             </div>

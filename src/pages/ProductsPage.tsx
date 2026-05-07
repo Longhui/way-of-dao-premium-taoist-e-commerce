@@ -21,23 +21,25 @@ export function ProductsPage() {
     .filter(p => activeCategory === 'All' || p.category === activeCategory)
     .filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
   return (
-    <div className="bg-dao-paper min-h-screen py-12 md:py-20">
+    <div className="bg-dao-paper min-h-screen py-8 md:py-10 lg:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row gap-12">
           {/* Sidebar */}
           <aside className="w-full md:w-64 flex-shrink-0 space-y-10">
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-dao-jade mb-6 flex items-center gap-2">
-                <Filter className="w-4 h-4" /> Categories
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-dao-jade mb-6 flex items-center gap-2 border-b border-dao-jade/10 pb-2">
+                <Filter className="w-3 h-3" /> Categories
               </h3>
-              <ul className="space-y-4">
+              <ul className="space-y-3">
                 {categories.map((cat) => (
                   <li key={cat}>
                     <button
                       onClick={() => setActiveCategory(cat)}
                       className={cn(
-                        "text-sm font-medium transition-all hover:pl-2 hover:text-dao-gold",
-                        activeCategory === cat ? "text-dao-jade font-bold border-l-2 border-dao-gold pl-4" : "text-muted-foreground pl-0"
+                        "text-sm font-medium transition-all text-left w-full hover:text-dao-gold",
+                        activeCategory === cat 
+                          ? "text-dao-jade font-bold border-l-4 border-dao-gold pl-4" 
+                          : "text-muted-foreground hover:pl-2"
                       )}
                     >
                       {cat}
@@ -46,15 +48,15 @@ export function ProductsPage() {
                 ))}
               </ul>
             </div>
-            <div className="hidden md:block">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-dao-jade mb-6">Discovery</h3>
+            <div className="space-y-6">
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-dao-jade border-b border-dao-jade/10 pb-2">Artifact Search</h3>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dao-jade/60" />
                 <Input
-                  placeholder="Search..."
+                  placeholder="Find artifact..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10 bg-transparent border-dao-jade/10 focus:border-dao-gold"
+                  className="pl-10 bg-white border-dao-jade/20 text-dao-jade placeholder:text-muted-foreground focus:ring-dao-jade"
                 />
               </div>
             </div>
@@ -62,8 +64,8 @@ export function ProductsPage() {
           {/* Grid */}
           <div className="flex-grow">
             <div className="flex justify-between items-center mb-10">
-              <h2 className="text-sm font-bold text-muted-foreground">
-                Showing {filteredProducts.length} results
+              <h2 className="text-sm font-bold text-dao-jade/70 uppercase tracking-widest">
+                Manifesting {filteredProducts.length} Selections
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
@@ -85,21 +87,21 @@ export function ProductsPage() {
                     className="group"
                   >
                     <Link to={`/shop/${product.id}`} className="block">
-                      <div className="aspect-square overflow-hidden bg-muted mb-6 relative">
+                      <div className="aspect-square overflow-hidden bg-muted mb-6 relative rounded-sm shadow-sm transition-shadow hover:shadow-premium">
                         <img
                           src={product.imageUrl}
                           alt={product.name}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                         <div className="absolute top-4 left-4">
-                          <Badge className="bg-dao-paper/90 text-dao-jade border-none text-[10px] uppercase font-bold tracking-tighter">
+                          <Badge className="bg-white/95 text-dao-jade border-dao-jade/5 text-[10px] uppercase font-bold tracking-tighter px-3 py-1">
                             {product.category}
                           </Badge>
                         </div>
                       </div>
-                      <h3 className="text-lg font-bold text-dao-jade mb-1 group-hover:text-dao-gold transition-colors">{product.name}</h3>
-                      <p className="text-dao-gold font-medium mb-4">${product.price.toFixed(2)}</p>
-                      <button className="w-full py-3 bg-dao-jade text-dao-paper text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                      <h3 className="text-lg font-display font-bold text-dao-jade mb-1 group-hover:text-dao-gold transition-colors">{product.name}</h3>
+                      <p className="text-dao-gold font-bold mb-4 tracking-tighter">${product.price.toFixed(2)}</p>
+                      <button className="w-full py-4 bg-dao-jade text-dao-paper text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
                         View Detail
                       </button>
                     </Link>
@@ -107,6 +109,13 @@ export function ProductsPage() {
                 ))
               )}
             </div>
+            {!isLoading && filteredProducts.length === 0 && (
+              <div className="py-24 text-center space-y-4">
+                <p className="text-dao-jade font-display text-2xl font-medium">The path is currently empty</p>
+                <p className="text-muted-foreground">Adjust your search to find other artifacts.</p>
+                <Button variant="ghost" onClick={() => {setSearch(''); setActiveCategory('All');}} className="text-dao-gold font-bold uppercase text-xs tracking-widest">Clear Path</Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

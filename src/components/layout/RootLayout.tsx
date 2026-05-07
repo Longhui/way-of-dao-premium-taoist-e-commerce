@@ -81,7 +81,7 @@ export function RootLayout() {
                     <DropdownMenuSeparator className="bg-dao-jade/5" />
                     {user?.role === 'admin' && (
                       <DropdownMenuItem asChild>
-                        <Link to="/admin" className="cursor-pointer text-dao-jade font-bold">
+                        <Link to="/admin" className="cursor-pointer text-dao-jade font-bold flex items-center">
                           <Settings className="w-4 h-4 mr-2" /> Archives (Admin)
                         </Link>
                       </DropdownMenuItem>
@@ -96,7 +96,7 @@ export function RootLayout() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Link to="/auth" className="p-2 text-dao-jade hover:text-dao-gold transition-colors">
+                <Link to="/admin-login" className="p-2 text-dao-jade hover:text-dao-gold transition-colors">
                   <UserIcon className="w-6 h-6" />
                 </Link>
               )}
@@ -144,13 +144,21 @@ export function RootLayout() {
                 Archives (Admin)
               </Link>
             )}
-            {isAuthenticated && (
+            {isAuthenticated ? (
               <Link
                 to="/profile"
                 onClick={() => setIsMenuOpen(false)}
                 className="block text-lg font-medium text-dao-jade"
               >
                 My Collection
+              </Link>
+            ) : (
+              <Link
+                to="/admin-login"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-lg font-medium text-dao-jade"
+              >
+                Sign In
               </Link>
             )}
           </div>

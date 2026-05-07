@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Search, Edit, Trash2, Package, Truck, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 export function AdminPage() {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -55,7 +56,7 @@ export function AdminPage() {
     productMutation.mutate(data);
   };
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 lg:py-12">
       <header className="mb-12">
         <h1 className="text-4xl font-display font-bold text-dao-jade">Celestial <span className="text-dao-gold italic">Archives</span></h1>
         <p className="text-muted-foreground mt-1">Administrative management for products and soul journeys.</p>
@@ -79,15 +80,15 @@ export function AdminPage() {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-dao-paper sm:max-w-[500px]">
-                  <DialogHeader><DialogTitle>{editingProduct ? 'Edit' : 'Create'} Artifact</DialogTitle></DialogHeader>
+                  <DialogHeader><DialogTitle className="text-dao-jade font-display text-xl">Artifact Details</DialogTitle></DialogHeader>
                   <form onSubmit={handleProductSubmit} className="space-y-4 py-4">
-                    <div className="grid gap-2"><Label>Name</Label><Input name="name" defaultValue={editingProduct?.name} required /></div>
+                    <div className="grid gap-2"><Label className="text-dao-jade">Name</Label><Input name="name" defaultValue={editingProduct?.name} required className="bg-white" /></div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="grid gap-2"><Label>Category</Label><select name="category" defaultValue={editingProduct?.category} className="h-10 px-3 rounded-md bg-white border border-dao-jade/10 text-sm"><option value="Artifacts">Artifacts</option><option value="Incense">Incense</option><option value="Literature">Literature</option><option value="Attire">Attire</option></select></div>
-                      <div className="grid gap-2"><Label>Price</Label><Input name="price" type="number" step="0.01" defaultValue={editingProduct?.price} required /></div>
+                      <div className="grid gap-2"><Label className="text-dao-jade">Category</Label><select name="category" defaultValue={editingProduct?.category} className="h-10 px-3 rounded-md bg-white border border-dao-jade/10 text-sm"><option value="Artifacts">Artifacts</option><option value="Incense">Incense</option><option value="Literature">Literature</option><option value="Attire">Attire</option></select></div>
+                      <div className="grid gap-2"><Label className="text-dao-jade">Price</Label><Input name="price" type="number" step="0.01" defaultValue={editingProduct?.price} required className="bg-white" /></div>
                     </div>
-                    <div className="grid gap-2"><Label>Image URL</Label><Input name="imageUrl" defaultValue={editingProduct?.imageUrl} required /></div>
-                    <div className="grid gap-2"><Label>Description</Label><textarea name="description" defaultValue={editingProduct?.description} className="min-h-[100px] p-3 rounded-md border border-dao-jade/10 text-sm" required /></div>
+                    <div className="grid gap-2"><Label className="text-dao-jade">Image URL</Label><Input name="imageUrl" defaultValue={editingProduct?.imageUrl} required className="bg-white" /></div>
+                    <div className="grid gap-2"><Label className="text-dao-jade">Description</Label><textarea name="description" defaultValue={editingProduct?.description} className="min-h-[100px] p-3 rounded-md border border-dao-jade/10 text-sm bg-white" required /></div>
                     <Button type="submit" className="w-full bg-dao-jade text-dao-paper font-bold uppercase tracking-widest text-xs h-12" disabled={productMutation.isPending}>Commit to Path</Button>
                   </form>
                 </DialogContent>
@@ -98,11 +99,11 @@ export function AdminPage() {
               <TableBody>
                 {products?.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase())).map(product => (
                   <TableRow key={product.id} className="hover:bg-dao-paper/30 group">
-                    <TableCell className="font-bold flex items-center gap-4"><img src={product.imageUrl} className="w-10 h-10 object-cover" /> {product.name}</TableCell>
-                    <TableCell><Badge variant="outline">{product.category}</Badge></TableCell>
-                    <TableCell>${product.price.toFixed(2)}</TableCell>
+                    <TableCell className="font-bold flex items-center gap-4 text-dao-jade"><img src={product.imageUrl} className="w-10 h-10 object-cover" /> {product.name}</TableCell>
+                    <TableCell><Badge variant="outline" className="border-dao-jade/20 text-dao-jade">{product.category}</Badge></TableCell>
+                    <TableCell className="text-dao-jade font-medium">${product.price.toFixed(2)}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => { setEditingProduct(product); setIsDialogOpen(true); }}><Edit className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => { setEditingProduct(product); setIsDialogOpen(true); }}><Edit className="w-4 h-4 text-dao-jade" /></Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -117,13 +118,13 @@ export function AdminPage() {
               <TableBody>
                 {orders?.map(order => (
                   <TableRow key={order.id}>
-                    <TableCell className="font-mono text-xs">#{order.id.slice(0, 8)}</TableCell>
-                    <TableCell><Badge>{order.status}</Badge></TableCell>
-                    <TableCell>${order.total.toFixed(2)}</TableCell>
+                    <TableCell className="font-mono text-xs text-dao-jade/80">#{order.id.slice(0, 8)}</TableCell>
+                    <TableCell><Badge className="bg-dao-gold/20 text-dao-jade border-none">{order.status}</Badge></TableCell>
+                    <TableCell className="text-dao-jade font-bold">${order.total.toFixed(2)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Select onValueChange={(val: OrderStatus) => orderStatusMutation.mutate({ id: order.id, update: { status: val } })}>
-                          <SelectTrigger className="w-[130px] h-8 text-[10px] uppercase font-bold">
+                          <SelectTrigger className="w-[130px] h-8 text-[10px] uppercase font-bold text-dao-jade">
                             <SelectValue placeholder="Status" />
                           </SelectTrigger>
                           <SelectContent>
